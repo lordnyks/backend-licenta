@@ -24,7 +24,7 @@ public class UserTable {
     private String password;
     private String email;
     private Profile profile;
-    private List<Car> cars;
+    private List<CarTable> cars;
     private String role;
 
 
@@ -33,7 +33,7 @@ public class UserTable {
     }
 
 
-    public UserTable(Long id, String password, String email, Profile profile, List<Car> cars, String role) {
+    public UserTable(Long id, String password, String email, Profile profile, List<CarTable> cars, String role) {
         this.id = id;
         this.password = password;
         this.email = email;
@@ -74,11 +74,11 @@ public class UserTable {
         this.profile = profile;
     }
 
-    public List<Car> getCars() {
+    public List<CarTable> getCars() {
         return cars;
     }
 
-    public void setCars(List<Car> cars) {
+    public void setCars(List<CarTable> cars) {
         this.cars = cars;
     }
 
