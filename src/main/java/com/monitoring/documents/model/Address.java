@@ -1,6 +1,20 @@
 package com.monitoring.documents.model;
 
+
+import com.sun.istack.NotNull;
+
+import javax.persistence.*;
+import javax.validation.constraints.Size;
+
+@Entity
+@Table
 public class Address {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Size(min = 3)
     private String county;
     private String city;
     private String townShip;

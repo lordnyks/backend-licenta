@@ -1,6 +1,9 @@
 package com.monitoring.documents.model;
 
+import com.sun.istack.NotNull;
+
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 
@@ -14,17 +17,27 @@ Data expirarii
 * */
 
 @Entity
-@Table
-public class CarTable {
+@Table(name = "car")
+public class CarEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "serialNumber")
     private String serialNumber;
+
     private String carNationalId;
+    @Column(name = "carBrand")
+    @NotNull
+    @Size(min = 2)
     private String brand;
+
+    @Column
+    @NotNull
     private String model;
+
+
     private Date expirationDate;
 
 

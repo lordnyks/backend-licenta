@@ -18,8 +18,8 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table
-public class NotificationsTable {
+@Table(name = "Notifications")
+public class NotificationsEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
