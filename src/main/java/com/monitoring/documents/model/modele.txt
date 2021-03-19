@@ -1,0 +1,24 @@
+~ User ~
+UserId
+Password
+Email -> username
+Profil(Numar telefon)
+Cars(Numar masina)
+Role
+
+~ Roles ~
+Administrator
+Moderator
+Helper
+Member
+
+
+
+~ Notificari ~
+Id
+Tip(SMS, Browser)
+Data trimis
+Data primit
+Seen
+Grad de alerta
+User id sent
