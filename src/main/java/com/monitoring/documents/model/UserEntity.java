@@ -46,25 +46,25 @@ public class UserEntity implements UserDetails{
     @JoinColumn(name = "Profile", referencedColumnName = "id")
     private Profile profile;
 
-/*    @ElementCollection(targetClass = CarTable.class)
-    private List<CarTable> cars;*/
+    @OneToMany(targetEntity = CarEntity.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "Cars", referencedColumnName = "id")
+    private List<CarEntity> cars;
+
     @Enumerated(EnumType.STRING)
     private ERole role;
 
     private boolean isEnabled;
 
-
     public UserEntity() {
 
     }
-
 
     public UserEntity(Long id, String password, String email, Profile profile, List<CarEntity> cars) {
         this.id = id;
         this.password = password;
         this.email = email;
         this.profile = profile;
-     //   this.cars = cars;
+        this.cars = cars;
     }
 
     public UserEntity(String firstName, String lastName, Date dateOfBirth, String email,

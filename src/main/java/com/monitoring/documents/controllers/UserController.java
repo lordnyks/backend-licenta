@@ -21,8 +21,12 @@ public class UserController {
         return "asdf";
     }
 
-    @GetMapping(path = "all")
-    public List<UserEntity> getAllStudents() { return userService.getAllUsers(); }
+    @GetMapping(path = "/all")
+    public List<UserEntity> getAllStudents()
+    {
+        return userService.getAllUsers();
+    }
+
 
     @GetMapping(path = "{userId}")
     public Optional<UserEntity> getStudentById(@PathVariable("userId") Long studentId) {
