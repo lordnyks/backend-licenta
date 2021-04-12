@@ -35,7 +35,6 @@ public class UserEntity implements UserDetails{
 
     @NotNull
     @NotBlank
-    @Size(min = 8, max = 32)
     private String password;
     private String email;
 
@@ -69,11 +68,15 @@ public class UserEntity implements UserDetails{
 
     public UserEntity(String firstName, String lastName, Date dateOfBirth, String email,
                       String username, String password, String gender, String phoneNumber) {
-        this.profile.setFirstName(firstName);
-        this.profile.setLastName(lastName);
-        this.profile.setDateOfBirth(dateOfBirth);
-        this.profile.setGender(gender);
-        this.profile.setPhoneNumber(phoneNumber);
+        Profile profile = new Profile();
+
+        profile.setFirstName(firstName);
+        profile.setLastName(lastName);
+        profile.setDateOfBirth(dateOfBirth);
+        profile.setGender(gender);
+        profile.setPhoneNumber(phoneNumber);
+
+        this.profile = profile;
         this.password = password;
         this.email = email;
         this.username = username;

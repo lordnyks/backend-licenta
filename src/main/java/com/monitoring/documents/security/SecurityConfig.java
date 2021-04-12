@@ -27,7 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Resource
     private UserService userService;
 
-    @Autowired
+    @Resource
     private AuthEntryPointJwt authEntryPointJwt;
 
     @Bean
@@ -56,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors().and().csrf().disable()
 //                .exceptionHandling().authenticationEntryPoint(authEntryPointJwt).and().sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+// f               .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/user/all").permitAll()
                 .antMatchers(HttpMethod.POST, "/auth/register").permitAll()

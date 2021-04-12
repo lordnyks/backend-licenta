@@ -16,10 +16,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("test")
-    public String test() {
-        return "asdf";
-    }
 
     @GetMapping(path = "/all")
     public List<UserEntity> getAllStudents()

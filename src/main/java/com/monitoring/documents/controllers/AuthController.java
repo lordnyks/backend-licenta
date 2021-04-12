@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,7 +36,7 @@ public class AuthController {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
+    @Resource
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -62,7 +63,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest request) {
-        System.out.println("ajunge aici");
         if(userRepository.existsByUsername(request.getUsername())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Eroare: Numele de utilizator este existent"));
         }
