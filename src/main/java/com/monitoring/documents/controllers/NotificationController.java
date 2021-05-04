@@ -10,5 +10,4 @@ public class NotificationController {
     @Autowired
     private NotificationService notificationService;
 
-
 }

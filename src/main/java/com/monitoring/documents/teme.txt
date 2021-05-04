@@ -1,0 +1,6 @@
+1. exceptii jwtutils
+2. token din response login -- interceptor,
+3. verificare daca e admin
+4. cum construiesc notificarea -- ?
+5. adnotari exceptie --
+6. exceptie care transimte mesaj in frontend --

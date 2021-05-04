@@ -14,6 +14,6 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException {
        logger.error("Eroare neautorizata: {}", e.getMessage());
-       httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Eroare: neautorizat");
+       httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Email sau parola gresite.");
     }
 }

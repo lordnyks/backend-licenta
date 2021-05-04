@@ -4,6 +4,7 @@ import com.nimbusds.oauth2.sdk.GeneralException;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
@@ -25,11 +26,13 @@ public class Profile {
     private String lastName;
 
     @NotNull
+    @NotBlank
     private String phoneNumber;
 
     @OneToOne(targetEntity = Address.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "profiles_address", referencedColumnName = "id")
     private Address address;
+
     private Date dateOfBirth;
     private String gender;
     private Integer age;
@@ -96,7 +99,6 @@ public class Profile {
     public void setAge(Integer age) {
         this.age = age;
     }
-
 
     public Long getId() {
         return id;

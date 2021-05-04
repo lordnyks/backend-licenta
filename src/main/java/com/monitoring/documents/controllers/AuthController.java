@@ -67,7 +67,6 @@ public class AuthController {
             return ResponseEntity.badRequest().body(new MessageResponse("Eroare: Numele de utilizator este existent"));
         }
 
-
         if(userRepository.existsByEmail(request.getEmail())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Eroare: Email-ul este deja existent"));
         }
@@ -82,6 +81,4 @@ public class AuthController {
 
         return ResponseEntity.ok(new MessageResponse("User-ul a fost creat cu succes!"));
     }
-
-
 }

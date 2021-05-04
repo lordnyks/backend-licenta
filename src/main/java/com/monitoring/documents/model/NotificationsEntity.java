@@ -2,16 +2,6 @@ package com.monitoring.documents.model;
 
 
 
-/*
-* ~ Notificari ~
-Id
-Tip(SMS, Browser)
-Data trimis
-Data primit
-Seen
-Grad de alerta
-User id sent
-* */
 
 
 import javax.persistence.*;

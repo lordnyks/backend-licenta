@@ -16,14 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 
-/* Modelul tabelului User;
- * UserId
- * Password
- * Email -> username
- * Profil(Numar telefon)
- * Cars(Numar masina)
- * Role
- */
+
 
 @Entity
 @Table(name = "users")
@@ -36,6 +29,10 @@ public class UserEntity implements UserDetails{
     @NotNull
     @NotBlank
     private String password;
+
+    @NotNull
+    @NotBlank
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "username")
@@ -69,7 +66,8 @@ public class UserEntity implements UserDetails{
     public UserEntity(String firstName, String lastName, Date dateOfBirth, String email,
                       String username, String password, String gender, String phoneNumber) {
         Profile profile = new Profile();
-
+        Address address = new Address();
+        profile.setAddress(address);
         profile.setFirstName(firstName);
         profile.setLastName(lastName);
         profile.setDateOfBirth(dateOfBirth);
@@ -145,6 +143,7 @@ public class UserEntity implements UserDetails{
     public String getUsername() {
         return username;
     }
+
     public Profile getProfile() {
         return profile;
     }
@@ -152,15 +151,6 @@ public class UserEntity implements UserDetails{
     public void setProfile(Profile profile) {
         this.profile = profile;
     }
-
-    //    public List<CarTable> getCars() {
-//        return cars;
-//    }
-//
-//    public void setCars(List<CarTable> cars) {
-//        this.cars = cars;
-//    }
-
 
     public ERole getRole() {
         return role;

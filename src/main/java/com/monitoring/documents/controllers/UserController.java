@@ -3,6 +3,7 @@ package com.monitoring.documents.controllers;
 import com.monitoring.documents.model.UserEntity;
 import com.monitoring.documents.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,36 +11,40 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(path = "/user")
+@CrossOrigin(origins = "*")
+@RequestMapping(path = "/users")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
 
-    @GetMapping(path = "/all")
-    public List<UserEntity> getAllStudents()
-    {
-        return userService.getAllUsers();
+    @GetMapping
+    public List<UserEntity> getUserByEmail(@RequestParam(required = false) String email) {
+        if(email == null) {
+            return userService.getAllUsers();
+        } else {
+            return userService.getUserByEmail(email);
+        }
     }
 
-
-    @GetMapping(path = "{userId}")
-    public Optional<UserEntity> getStudentById(@PathVariable("userId") Long studentId) {
-        return userService.getUserById(studentId);
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR')")
+    @GetMapping(path = "{id}")
+    public Optional<UserEntity> getUserById(@PathVariable("id") Long userId) {
+        return userService.getUserById(userId);
     }
 
-    @PostMapping(path = "add")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR')")
+    @PostMapping
     public void registerUser(@RequestBody UserEntity user) { userService.save(user);}
 
-    @DeleteMapping(path = "{userId}")
-    public void deleteUser(@PathVariable("studentId") Long userId) { userService.deleteUser(userId);}
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR')")
+    @DeleteMapping(path = "{id}")
+    public void deleteUser(@PathVariable("id") Long userId) { userService.deleteUser(userId);}
 
-    @PutMapping(path = "{userId}")
-    public void updateStudent(@PathVariable("userId") Long id, @RequestBody UserEntity userEntity) {
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR')")
+    @PutMapping(path = "{id}")
+    public void updateStudent(@PathVariable("id") Long id, @RequestBody UserEntity userEntity) {
         userService.updateUser(id, userEntity);
     }
-
-
-
 }

@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Component
+@Transactional
 public class UserService implements UserDetailsService {
 
     @Autowired
@@ -26,6 +27,10 @@ public class UserService implements UserDetailsService {
 
     public Optional<UserEntity> getUserById(Long userId) {
         return userRepository.findById(userId);
+    }
+
+    public List<UserEntity> getUserByEmail(String email) {
+        return userRepository.findUserByEmail(email);
     }
 
     public void save(UserEntity user) {
@@ -48,7 +53,7 @@ public class UserService implements UserDetailsService {
         userRepository.deleteById(userId);
     }
 
-    @Transactional
+
     public void updateUser(Long userId, UserEntity user) {
 
         UserEntity userFind = userRepository.findById(userId).orElseThrow(() -> new IllegalStateException(
@@ -69,9 +74,9 @@ public class UserService implements UserDetailsService {
 
         if(email != null && email.length() > 10 && !Objects.equals(userFind.getEmail(), email)) {
 
-            Optional<UserEntity> userOptional = userRepository.findUserByEmail(email);
+            List<UserEntity> userList = userRepository.findUserByEmail(email);
 
-            if(userOptional.isPresent()) {
+            if(!userList.isEmpty()) {
                 throw new IllegalStateException("Email-ul este deja luat!");
             }
 

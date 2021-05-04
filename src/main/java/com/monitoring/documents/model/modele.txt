@@ -6,3 +6,33 @@ Member
 
 
 
+/*
+* ~ Cars ~
+Numar sasiu(optional)
+Numar masina
+Marca
+Model
+Data expirarii
+* */
+
+
+/*
+* ~ Notificari ~
+Id
+Tip(SMS, Browser)
+Data trimis
+Data primit
+Seen
+Grad de alerta
+User id sent
+* */
+
+
+/* Modelul tabelului User;
+ * UserId
+ * Password
+ * Email -> username
+ * Profil(Numar telefon)
+ * Cars(Numar masina)
+ * Role
+ */

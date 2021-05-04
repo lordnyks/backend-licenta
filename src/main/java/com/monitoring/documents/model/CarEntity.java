@@ -7,14 +7,7 @@ import javax.validation.constraints.Size;
 import java.util.Date;
 
 
-/*
-* ~ Cars ~
-Numar sasiu(optional)
-Numar masina
-Marca
-Model
-Data expirarii
-* */
+
 
 @Entity
 @Table(name = "car")
