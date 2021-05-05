@@ -4,6 +4,7 @@ import com.monitoring.documents.model.Subscriptions;
 import com.monitoring.documents.repository.SubscriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +28,10 @@ public class SubscriptionService {
 
     public List<Subscriptions> getAllSubscriptionsByUserId(Long id) {
         return subscriptionRepository.findAllByUserId(id);
+    }
+
+    public void save(@RequestBody Subscriptions subscription) {
+        subscriptionRepository.save(subscription);
     }
 
 }

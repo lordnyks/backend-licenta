@@ -1,5 +1,7 @@
 package com.monitoring.documents.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -13,19 +15,23 @@ public class Subscriptions {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @NotBlank
+    @NotNull(message = "Introduceti un user_id")
     @Column(name = "user_id")
     private Long userId;
 
-//    @NotNull
-//    @NotBlank
-//    @Column(name = "dateOfCreation")
-//    private Date dateOfCreation;
-
     @NotNull
-    @NotBlank
+    @Column(name = "dateOfCreation")
+    @JsonFormat(pattern="yyyy-MM-dd")
+    private Date dateOfCreation;
+
+    @Column(name = "firstName")
+    private String firstName;
+
+    @Column(name = "lastName")
+    private String lastName;
+
     @Column(name = "data_expirarii")
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date expireDate;
 
     @Column(name = "numar_national_masina")
@@ -34,6 +40,9 @@ public class Subscriptions {
     @Column(name = "marca_masina")
     private String made;
 
+    @Column(name = "model_masina")
+    private String model;
+
     @Column(name = "descriere")
     private String description;
 
@@ -41,12 +50,18 @@ public class Subscriptions {
 
     }
 
-    public Subscriptions(Long id, @NotNull @NotBlank Long userId, @NotNull @NotBlank Date expireDate, String plateNumber, String made, String description) {
+    public Subscriptions(Long id, @NotNull(message = "Introduceti un user_id") Long userId, @NotNull Date dateOfCreation,
+                         @NotNull String firstName, @NotNull String lastName, @NotNull Date expireDate,
+                         String plateNumber, String made, String model, String description) {
         this.id = id;
         this.userId = userId;
+        this.dateOfCreation = dateOfCreation;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.expireDate = expireDate;
         this.plateNumber = plateNumber;
         this.made = made;
+        this.model = model;
         this.description = description;
     }
 
@@ -64,6 +79,30 @@ public class Subscriptions {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public Date getDateOfCreation() {
+        return dateOfCreation;
+    }
+
+    public void setDateOfCreation(Date dateOfCreation) {
+        this.dateOfCreation = dateOfCreation;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public Date getExpireDate() {
@@ -88,6 +127,14 @@ public class Subscriptions {
 
     public void setMade(String made) {
         this.made = made;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
     }
 
     public String getDescription() {

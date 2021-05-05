@@ -27,4 +27,9 @@ public class SubscriptionController {
         return subscriptionService.getAllSubscriptionsByUserId(id);
     }
 
+    @PostMapping
+    public void save(@RequestBody Subscriptions subscription) {
+        subscriptionService.save(subscription);
+    }
+ 
 }

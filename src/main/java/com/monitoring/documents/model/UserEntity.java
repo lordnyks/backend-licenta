@@ -42,9 +42,6 @@ public class UserEntity implements UserDetails{
     @JoinColumn(name = "Profile", referencedColumnName = "id")
     private Profile profile;
 
-    @OneToMany(targetEntity = CarEntity.class, cascade = CascadeType.ALL)
-    @JoinColumn(name = "Cars", referencedColumnName = "id")
-    private List<CarEntity> cars;
 
     @Enumerated(EnumType.STRING)
     private ERole role;
@@ -55,12 +52,12 @@ public class UserEntity implements UserDetails{
 
     }
 
-    public UserEntity(Long id, String password, String email, Profile profile, List<CarEntity> cars) {
+    public UserEntity(Long id, String password, String email, Profile profile) {
         this.id = id;
         this.password = password;
         this.email = email;
         this.profile = profile;
-        this.cars = cars;
+
     }
 
     public UserEntity(String firstName, String lastName, Date dateOfBirth, String email,
