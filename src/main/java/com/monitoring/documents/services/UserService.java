@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -60,7 +59,7 @@ public class UserService implements UserDetailsService {
                 "N-a fost gasit niciun user cu id-ul " + userId
         ));
 
-        verifyInputs(userFind, user.getEmail(), user.getProfile().getFirstName(), user.getProfile().getLastName(),
+        updateInput(userFind, user.getEmail(), user.getProfile().getFirstName(), user.getProfile().getLastName(),
                 user.getProfile().getPhoneNumber(), user.getProfile().getDateOfBirth(),
                 user.getProfile().getAge(), user.getProfile().getPersonalIdentificationNumber(),
                 user.getProfile().getAddress().getCounty(), user.getProfile().getAddress().getCity(),
@@ -68,71 +67,23 @@ public class UserService implements UserDetailsService {
                 user.getProfile().getAddress().getStreet(), user.getProfile().getAddress().getGateNumber());
     }
 
-    public void verifyInputs(UserEntity userFind, String email, String firstName, String lastName,
-                             String phoneNumber, Date dateOfBirth, Integer age, String personalIdentificationNumber,
-                             String county, String city, String townShip, String village, String street, String gateNumber) {
+    public void updateInput(UserEntity userFind, String email, String firstName, String lastName,
+                            String phoneNumber, Date dateOfBirth, Integer age, String personalIdentificationNumber,
+                            String county, String city, String townShip, String village, String street, String gateNumber) {
 
-        if(email != null && email.length() > 10 && !Objects.equals(userFind.getEmail(), email)) {
-
-            List<UserEntity> userList = userRepository.findUserByEmail(email);
-
-            if(!userList.isEmpty()) {
-                throw new IllegalStateException("Email-ul este deja luat!");
-            }
-
-            userFind.setEmail(email);
-        }
-
-        if(firstName != null && firstName.length() > 4 && !Objects.equals(userFind.getProfile().getFirstName(), firstName)) {
-            userFind.setEmail(firstName);
-        }
-
-        if(lastName != null && lastName.length() > 4 && !Objects.equals(userFind.getProfile().getLastName(), lastName)) {
-            userFind.getProfile().setLastName(lastName);
-        }
-
-        if(phoneNumber != null && phoneNumber.length() > 4 && !Objects.equals(userFind.getProfile().getPhoneNumber(), phoneNumber)) {
-            userFind.getProfile().setPhoneNumber(phoneNumber);
-        }
-
-        if(dateOfBirth != null && !Objects.equals(userFind.getProfile().getPhoneNumber(), dateOfBirth)) {
-            userFind.getProfile().setDateOfBirth(dateOfBirth);
-        }
-
-        if(age != null && !Objects.equals(userFind.getProfile().getAge(), age)) {
-            userFind.getProfile().setAge(age);
-        }
-
-        if(personalIdentificationNumber != null && !Objects.equals(userFind.getProfile().getPersonalIdentificationNumber(), personalIdentificationNumber)) {
-            userFind.getProfile().setPersonalIdentificationNumber(personalIdentificationNumber);
-        }
-
-        if(county != null && !Objects.equals(userFind.getProfile().getAddress().getCounty(), county)) {
-            userFind.getProfile().getAddress().setCounty(county);
-
-        }
-
-        if(city != null && !Objects.equals(userFind.getProfile().getAddress().getCity(), city)) {
-            userFind.getProfile().getAddress().setCity(city);
-
-        }
-
-        if(townShip != null && !Objects.equals(userFind.getProfile().getAddress().getTownShip(), townShip)) {
-            userFind.getProfile().getAddress().setTownShip(townShip);
-        }
-
-        if(village != null && !Objects.equals(userFind.getProfile().getAddress().getVillage(), village)) {
-            userFind.getProfile().getAddress().setVillage(village);
-        }
-
-        if(street != null && !Objects.equals(userFind.getProfile().getAddress().getStreet(), street)) {
-            userFind.getProfile().getAddress().setStreet(street);
-        }
-
-        if(gateNumber != null && !Objects.equals(userFind.getProfile().getAddress().getGateNumber(), gateNumber)) {
-            userFind.getProfile().getAddress().setStreet(gateNumber);
-        }
-
+        userFind.setEmail(email);
+        userFind.getProfile().setFirstName(firstName);
+        userFind.getProfile().setLastName(lastName);
+        userFind.getProfile().setPhoneNumber(phoneNumber);
+        userFind.getProfile().setDateOfBirth(dateOfBirth);
+        userFind.getProfile().setAge(age);
+        userFind.getProfile().setPersonalIdentificationNumber(personalIdentificationNumber);
+        userFind.getProfile().getAddress().setCounty(county);
+        userFind.getProfile().getAddress().setCity(city);
+        userFind.getProfile().getAddress().setTownShip(townShip);
+        userFind.getProfile().getAddress().setVillage(village);
+        userFind.getProfile().getAddress().setStreet(street);
+        userFind.getProfile().getAddress().setGateNumber(gateNumber);
     }
 
 

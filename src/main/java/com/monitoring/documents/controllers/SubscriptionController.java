@@ -4,6 +4,7 @@ package com.monitoring.documents.controllers;
 import com.monitoring.documents.model.Subscriptions;
 import com.monitoring.documents.services.SubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,8 +29,8 @@ public class SubscriptionController {
     }
 
     @PostMapping
-    public void save(@RequestBody Subscriptions subscription) {
-        subscriptionService.save(subscription);
+    public ResponseEntity<Subscriptions> save(@RequestBody Subscriptions subscription) {
+        return ResponseEntity.ok(subscriptionService.save(subscription));
     }
  
 }

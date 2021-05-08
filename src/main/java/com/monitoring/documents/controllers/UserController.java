@@ -1,10 +1,11 @@
 package com.monitoring.documents.controllers;
 
 import com.monitoring.documents.model.UserEntity;
+import com.monitoring.documents.repository.NotificationRepository;
 import com.monitoring.documents.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,7 +45,7 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR')")
     @PutMapping(path = "{id}")
-    public void updateStudent(@PathVariable("id") Long id, @RequestBody UserEntity userEntity) {
+    public void updateStudent(@PathVariable("id") Long id, @Validated @RequestBody UserEntity userEntity) {
         userService.updateUser(id, userEntity);
     }
 }

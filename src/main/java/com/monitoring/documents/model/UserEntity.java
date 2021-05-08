@@ -33,6 +33,7 @@ public class UserEntity implements UserDetails{
     @NotNull
     @NotBlank
     @Column(name = "email", unique = true)
+    @Size(min = 4)
     private String email;
 
     @Column(name = "username")
