@@ -1,7 +1,6 @@
 package com.monitoring.documents.controllers;
 
 import com.monitoring.documents.model.UserEntity;
-import com.monitoring.documents.repository.NotificationRepository;
 import com.monitoring.documents.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,7 +17,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
 
     @GetMapping
     public List<UserEntity> getUserByEmail(@RequestParam(required = false) String email) {
@@ -43,7 +41,7 @@ public class UserController {
     @DeleteMapping(path = "{id}")
     public void deleteUser(@PathVariable("id") Long userId) { userService.deleteUser(userId);}
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR', 'ROLE_MEMBER')")
     @PutMapping(path = "{id}")
     public void updateStudent(@PathVariable("id") Long id, @Validated @RequestBody UserEntity userEntity) {
         userService.updateUser(id, userEntity);

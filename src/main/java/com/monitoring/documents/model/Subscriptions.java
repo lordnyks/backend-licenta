@@ -1,9 +1,9 @@
 package com.monitoring.documents.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
@@ -20,8 +20,11 @@ public class Subscriptions {
     private Long userId;
 
     @NotNull
+    private String email;
+
+    @NotNull
     @Column(name = "dateOfCreation")
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date dateOfCreation;
 
     @Column(name = "firstName")
@@ -31,7 +34,7 @@ public class Subscriptions {
     private String lastName;
 
     @Column(name = "data_expirarii")
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date expireDate;
 
     @Column(name = "numar_national_masina")
@@ -50,11 +53,10 @@ public class Subscriptions {
 
     }
 
-    public Subscriptions(Long id, @NotNull(message = "Introduceti un user_id") Long userId, @NotNull Date dateOfCreation,
-                         @NotNull String firstName, @NotNull String lastName, @NotNull Date expireDate,
-                         String plateNumber, String made, String model, String description) {
+    public Subscriptions(Long id, @NotNull(message = "Introduceti un user_id") Long userId, @NotNull String email, @NotNull Date dateOfCreation, String firstName, String lastName, Date expireDate, String plateNumber, String made, String model, String description) {
         this.id = id;
         this.userId = userId;
+        this.email = email;
         this.dateOfCreation = dateOfCreation;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -79,6 +81,14 @@ public class Subscriptions {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Date getDateOfCreation() {

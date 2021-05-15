@@ -28,6 +28,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(userId);
     }
 
+
     public List<UserEntity> getUserByEmail(String email) {
         return userRepository.findUserByEmail(email);
     }

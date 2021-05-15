@@ -26,6 +26,9 @@ public class SubscriptionService {
         return subscriptionRepository.findById(id);
     }
 
+    public List<Subscriptions> getSubscriptionByIdAndDescription(Long id, String description) {
+        return subscriptionRepository.findAllByUserIdAndDescription(id, description);
+    }
 
     public List<Subscriptions> getAllSubscriptionsByUserId(Long id) {
         return subscriptionRepository.findAllByUserId(id);
@@ -33,6 +36,17 @@ public class SubscriptionService {
 
     public Subscriptions save(@RequestBody Subscriptions subscription) {
        return subscriptionRepository.save(subscription);
+    }
+
+    public void remove(Long id) {
+        boolean exists = subscriptionRepository.existsById(id);
+
+        if(!exists) {
+            throw new IllegalStateException("Nu exista niciun abonament cu id-ul: " + id);
+        }
+
+        subscriptionRepository.deleteById(id);
+
     }
 
 }
