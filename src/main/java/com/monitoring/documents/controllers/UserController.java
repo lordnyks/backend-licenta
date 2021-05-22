@@ -46,4 +46,5 @@ public class UserController {
     public void updateStudent(@PathVariable("id") Long id, @Validated @RequestBody UserEntity userEntity) {
         userService.updateUser(id, userEntity);
     }
+
 }

@@ -34,6 +34,10 @@ public class SubscriptionService {
         return subscriptionRepository.findAllByUserId(id);
     }
 
+    public List<Subscriptions> getAllByEmail(String email) {
+        return subscriptionRepository.findAllByEmail(email);
+    }
+
     public Subscriptions save(@RequestBody Subscriptions subscription) {
        return subscriptionRepository.save(subscription);
     }

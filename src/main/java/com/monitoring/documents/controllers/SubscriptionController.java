@@ -35,6 +35,12 @@ public class SubscriptionController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR', 'ROLE_HELPER', 'ROLE_MEMBER')")
+    @GetMapping(path = "email")
+    public List<Subscriptions> getAllSubscriptionsByEmail(@RequestParam("email") String email) {
+        return subscriptionService.getAllByEmail(email);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR', 'ROLE_HELPER', 'ROLE_MEMBER')")
     @PostMapping
     public ResponseEntity<Subscriptions> save(@RequestBody Subscriptions subscription) {
         return ResponseEntity.ok(subscriptionService.save(subscription));
