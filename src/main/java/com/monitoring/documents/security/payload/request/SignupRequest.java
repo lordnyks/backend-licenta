@@ -1,5 +1,6 @@
 package com.monitoring.documents.security.payload.request;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Set;
 
@@ -7,7 +8,7 @@ public class SignupRequest {
 
     private String firstName;
     private String lastName;
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
     private String email;
     private String username;
     private String password;
@@ -39,11 +40,11 @@ public class SignupRequest {
         this.lastName = lastName;
     }
 
-    public Date getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 

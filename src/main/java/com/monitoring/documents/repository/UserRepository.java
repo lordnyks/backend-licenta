@@ -3,14 +3,25 @@ package com.monitoring.documents.repository;
 
 import com.monitoring.documents.model.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
-    List<UserEntity> findUserByEmail(String email);
+    List<UserEntity> findUsersByEmail(String email);
+    @Query("select user.email from UserEntity user")
+    List<String> getAllEmails();
     UserEntity findUserByUsername(String username);
+    Optional<UserEntity> findUserByEmail(String email);
     Boolean existsByUsername(String username);
     Boolean existsByEmail(String email);
+
+    @Query("select count(user.id) from UserEntity user")
+    Integer countById();
+
+    @Query("select count(user.profile.gender) from UserEntity user")
+    Integer countByMaleGender();
 }

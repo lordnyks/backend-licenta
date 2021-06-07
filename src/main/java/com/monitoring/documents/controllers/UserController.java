@@ -1,5 +1,6 @@
 package com.monitoring.documents.controllers;
 
+import com.monitoring.documents.model.ERole;
 import com.monitoring.documents.model.UserEntity;
 import com.monitoring.documents.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,12 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR')")
+    @GetMapping(path = "allEmails")
+    public List<String> getAllUsersByEmail() {
+        return userService.getAllUsersByEmail();
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR')")
     @GetMapping(path = "{id}")
     public Optional<UserEntity> getUserById(@PathVariable("id") Long userId) {
         return userService.getUserById(userId);
@@ -43,8 +50,30 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR', 'ROLE_MEMBER')")
     @PutMapping(path = "{id}")
-    public void updateStudent(@PathVariable("id") Long id, @Validated @RequestBody UserEntity userEntity) {
+    public void updateUser(@PathVariable("id") Long id, @Validated @RequestBody UserEntity userEntity) {
         userService.updateUser(id, userEntity);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR', 'ROLE_HELPER', 'ROLE_MEMBER')")
+    @PatchMapping(path = "{email}")
+    public void updateRole(@PathVariable("email") String email, @RequestParam String role, @RequestParam String asker ) {
+        userService.updateRole(email, role, asker);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR', 'ROLE_HELPER', 'ROLE_MEMBER')")
+    @GetMapping(path = "role")
+    public ERole getRole(@RequestParam String email) {
+        return userService.getRole(email);
+    }
+
+    @GetMapping(path = "/countUsers")
+    public Integer getAllUsers() {
+        return userService.countAllUsers();
+    }
+
+    @GetMapping(path = "/countMaleGender")
+    public Integer getAllMaleUsers() {
+        return userService.countByMaleGender();
     }
 
 }

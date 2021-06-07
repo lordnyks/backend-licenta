@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -61,7 +62,7 @@ public class UserEntity implements UserDetails{
 
     }
 
-    public UserEntity(String firstName, String lastName, Date dateOfBirth, String email,
+    public UserEntity(String firstName, String lastName, LocalDate dateOfBirth, String email,
                       String username, String password, String gender, String phoneNumber) {
         Profile profile = new Profile();
         Address address = new Address();

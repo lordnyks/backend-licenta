@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -45,6 +46,28 @@ public class SubscriptionController {
     public ResponseEntity<Subscriptions> save(@RequestBody Subscriptions subscription) {
         return ResponseEntity.ok(subscriptionService.save(subscription));
     }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR', 'ROLE_HELPER', 'ROLE_MEMBER')")
+    @PutMapping(path = "{id}")
+    public void update(@PathVariable("id") Long id, @RequestBody Subscriptions subscription) {
+        subscriptionService.update(id ,subscription);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR', 'ROLE_HELPER', 'ROLE_MEMBER')")
+    @PatchMapping(path = "{id}")
+    public void personaliezdUpdate(@PathVariable("id") Long id, @RequestBody Subscriptions subscription) {
+        subscriptionService.personalizedUpdate(id ,subscription);
+    }
+
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR', 'ROLE_HELPER', 'ROLE_MEMBER')")
+    @GetMapping(path = "/expired")
+    public List<Subscriptions> getAllExpiredSubscriptions() throws ParseException {
+
+
+        return subscriptionService.findAllByExpireDate();
+    }
+
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR', 'ROLE_HELPER', 'ROLE_MEMBER')")
     @DeleteMapping(path = "{id}")
     public void remove(@PathVariable("id") Long id) {

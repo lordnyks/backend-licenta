@@ -1,14 +1,18 @@
 package com.monitoring.documents.services;
 
+import com.monitoring.documents.model.ERole;
+import com.monitoring.documents.model.Subscriptions;
 import com.monitoring.documents.model.UserEntity;
 import com.monitoring.documents.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +24,9 @@ public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    @Value("${admin.account}")
+    private String adminAccount;
+
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
     }
@@ -30,7 +37,11 @@ public class UserService implements UserDetailsService {
 
 
     public List<UserEntity> getUserByEmail(String email) {
-        return userRepository.findUserByEmail(email);
+        return userRepository.findUsersByEmail(email);
+    }
+
+    public List<String> getAllUsersByEmail() {
+        return userRepository.getAllEmails();
     }
 
     public void save(UserEntity user) {
@@ -69,7 +80,7 @@ public class UserService implements UserDetailsService {
     }
 
     public void updateInput(UserEntity userFind, String email, String firstName, String lastName,
-                            String phoneNumber, Date dateOfBirth, Integer age, String personalIdentificationNumber,
+                            String phoneNumber, LocalDate dateOfBirth, Integer age, String personalIdentificationNumber,
                             String county, String city, String townShip, String village, String street, String gateNumber) {
 
         userFind.setEmail(email);
@@ -87,5 +98,73 @@ public class UserService implements UserDetailsService {
         userFind.getProfile().getAddress().setGateNumber(gateNumber);
     }
 
+    public ERole  getRole(String email) {
+        UserEntity userTemp = userRepository.findUserByEmail(email).orElseThrow(() -> new IllegalStateException("Utilizatorul " + email + " nu există în baza de date!"));
+
+        return userTemp.getRole();
+    }
+
+    public Integer countByMaleGender() {
+        return userRepository.countByMaleGender();
+    }
+
+    public Integer countAllUsers() {
+        return userRepository.countById();
+    }
+    public void updateRole(String email, String role, String asker) {
+        UserEntity userTemp = userRepository.findUserByEmail(email).orElseThrow(() -> new IllegalStateException("Utilizatorul " + email + " nu există în baza de date!"));
+
+        UserEntity authorityAsker = userRepository.findUserByEmail(asker).orElseThrow(() -> new IllegalStateException("Eroare! Contacteaza un administrator! Email: " + adminAccount));
+
+        if(adminAccount.equals(userTemp.getUsername()))
+            throw new IllegalStateException("Nu poti schimba rolul acestui utilizator!");
+
+        if(userTemp.getUsername().equals(authorityAsker.getUsername())) {
+            throw new IllegalStateException("Nu poti sa-ti schimbi propriul tau rol!");
+        }
+
+
+
+        if(authorityAsker.getRole().toString() == "ROLE_SUPERVISOR" || authorityAsker.getRole().toString() == "ROLE_ADMIN") {
+
+            switch (role) {
+                case "ROLE_MEMBER":
+                    if(userTemp.getRole().toString().equals("ROLE_ADMIN") || userTemp.getRole().toString().equals("ROLE_SUPERVISOR") )
+                        throw new IllegalStateException("Doar administratorul poate modifica intr-un rol mai mic.");
+                    userTemp.setRole(ERole.ROLE_MEMBER);
+
+                    break;
+                case "ROLE_HELPER":
+                    if(userTemp.getRole().toString().equals("ROLE_ADMIN") || userTemp.getRole().toString().equals("ROLE_SUPERVISOR") )
+                        throw new IllegalStateException("Doar administratorul poate modifica intr-un rol mai mic.");
+
+                    userTemp.setRole(ERole.ROLE_HELPER);
+                    break;
+                case "ROLE_MODERATOR":
+                    if(userTemp.getRole().toString().equals("ROLE_ADMIN") || userTemp.getRole().toString().equals("ROLE_SUPERVISOR") )
+                        throw new IllegalStateException("Doar administratorul poate modifica intr-un rol mai mic.");
+
+                    userTemp.setRole(ERole.ROLE_MODERATOR);
+                    break;
+                case "ROLE_SUPERVISOR":
+                    if(!(/*authorityAsker.getRole().toString() == "ROLE_ADMIN" && */adminAccount.equals(authorityAsker.getUsername())))
+                        throw new IllegalStateException("Numai un administrator poate efectua această acțiune!");
+                    userTemp.setRole(ERole.ROLE_SUPERVISOR);
+                    break;
+                case "ROLE_ADMINISTRATOR":
+                    if(!(/*authorityAsker.getRole().toString() == "ROLE_ADMIN"&&*/ adminAccount.equals(authorityAsker.getUsername())))
+                        throw new IllegalStateException("Numai un administrator poate efectua această acțiune!");
+                    userTemp.setRole(ERole.ROLE_ADMIN);
+                    break;
+                default:
+                    throw new IllegalStateException("Nu există rolul " + role + ".");
+
+            }
+        } else {
+            throw new IllegalStateException("Nu ai acces pentru a modifica rolurile!");
+        }
+
+
+    }
 
 }

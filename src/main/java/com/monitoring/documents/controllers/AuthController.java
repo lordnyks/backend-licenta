@@ -64,11 +64,11 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest request) {
         if(userRepository.existsByUsername(request.getUsername())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Eroare: Numele de utilizator este existent"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Email-ul " + request.getUsername() + " este deja folosit de către alt utilizator!"));
         }
 
         if(userRepository.existsByEmail(request.getEmail())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Eroare: Email-ul este deja existent"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Email-ul este deja existent!"));
         }
 
         UserEntity user = new UserEntity(request.getFirstName(),request.getLastName(), request.getDateOfBirth(), request.getEmail(), request.getUsername(),

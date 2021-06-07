@@ -6,6 +6,9 @@ import com.sun.istack.NotNull;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.Calendar;
 import java.util.Date;
 
 
@@ -33,22 +36,24 @@ public class Profile {
     @JoinColumn(name = "profiles_address", referencedColumnName = "id")
     private Address address;
 
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
     private String gender;
+
+    @Transient
     private Integer age;
+
     private String personalIdentificationNumber;
 
     public Profile() {
 
     }
 
-    public Profile(String firstName, String lastName, String phoneNumber, Address address, Date dateOfBirth, Integer age, String personalIdentificationNumber) {
+    public Profile(String firstName, String lastName, String phoneNumber, Address address, LocalDate dateOfBirth, String personalIdentificationNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.dateOfBirth = dateOfBirth;
-        this.age = age;
         this.personalIdentificationNumber = personalIdentificationNumber;
     }
 
@@ -84,16 +89,16 @@ public class Profile {
         this.address = address;
     }
 
-    public Date getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
     public Integer getAge() {
-        return age;
+        return Period.between(this.dateOfBirth, LocalDate.now()).getYears();
     }
 
     public void setAge(Integer age) {
@@ -123,4 +128,5 @@ public class Profile {
     public void setPersonalIdentificationNumber(String personalIdentificationNumber) {
         this.personalIdentificationNumber = personalIdentificationNumber;
     }
+
 }
