@@ -1,13 +1,19 @@
 package com.monitoring.documents.controllers;
 
 import com.monitoring.documents.model.ERole;
+import com.monitoring.documents.model.ResetPassword;
 import com.monitoring.documents.model.UserEntity;
+import com.monitoring.documents.services.EmailService;
 import com.monitoring.documents.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.PermitAll;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +25,12 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @GetMapping
     public List<UserEntity> getUserByEmail(@RequestParam(required = false) String email) {
         if(email == null) {
@@ -28,7 +40,7 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR', 'ROLE_HELPER')")
     @GetMapping(path = "allEmails")
     public List<String> getAllUsersByEmail() {
         return userService.getAllUsersByEmail();
@@ -67,13 +79,48 @@ public class UserController {
     }
 
     @GetMapping(path = "/countUsers")
-    public Integer getAllUsers() {
+    public Optional<Integer> getAllUsers() {
         return userService.countAllUsers();
     }
 
-    @GetMapping(path = "/countMaleGender")
-    public Integer getAllMaleUsers() {
-        return userService.countByMaleGender();
+    @GetMapping(path = "/countGenders")
+    public List<Integer> getAllMaleUsers() {
+        return userService.countGenders();
     }
+
+    @GetMapping(path = "/countRoles")
+    public List<Integer> getAllRoles() {
+        return userService.getCountRoles();
+    }
+
+    @PatchMapping(path = "/sendTokenEmail") //sendTokenEmail?id=x;
+    public void sendEmail(@RequestParam String email) {
+        UserEntity userTemp = userService.getByEmail(email).orElseThrow(() -> new IllegalStateException("Utilizatorul cu email-ul " + email + " nu exista!"));
+
+        ResetPassword password = new ResetPassword();
+
+        userTemp.setResetToken(password.getToken());
+
+        emailService.sendMessage(userTemp.getEmail(), "Resetare parolă", "Codul pentru resetare parolei este: " + userTemp.getResetToken());
+
+        userService.save(userTemp);
+    }
+
+    @PatchMapping(path = "/resetPassword")
+    public void resetPassword(@RequestParam String email, @RequestBody ResetPassword password) {
+        UserEntity userTemp = userService.getByEmail(email).orElseThrow(() -> new IllegalStateException("Utilizatorul cu email-ul " + email + " nu exista!"));
+
+        if(!bCryptPasswordEncoder.matches(password.getPassword(),userTemp.getPassword())) {
+            userTemp.setPassword(bCryptPasswordEncoder.encode(password.getPassword()));
+            emailService.sendMessage(userTemp.getEmail(), "Parola actualizată", String.format("Parola ta a fost actualizată în data de: %s.", LocalDate.now()));
+            userTemp.setResetToken(null);
+            userService.save(userTemp);
+        } else {
+
+            throw new IllegalStateException("Parola pe care ai inserat-o este aceeași cu cea prezentă.");
+        }
+
+    }
+
 
 }

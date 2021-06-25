@@ -50,6 +50,11 @@ public class UserEntity implements UserDetails{
 
     private boolean isEnabled;
 
+
+    private String resetToken;
+
+
+
     public UserEntity() {
 
     }
@@ -157,6 +162,14 @@ public class UserEntity implements UserDetails{
 
     public void setRole(ERole role) {
         this.role = role;
+    }
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
     }
 }
 

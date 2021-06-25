@@ -60,11 +60,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/auth/register").permitAll()
                 .antMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                .antMatchers(HttpMethod.GET,"/users/countUsers", "/users/countMaleGender").permitAll()
+                .antMatchers(HttpMethod.PATCH, "/users/sendTokenEmail",  "/users/resetPassword").permitAll()
                 .anyRequest().authenticated();
 
         httpSecurity.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
-
-
-
 }

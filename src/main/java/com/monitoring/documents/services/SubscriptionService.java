@@ -1,19 +1,15 @@
 package com.monitoring.documents.services;
 
-import com.monitoring.documents.model.Subscriptions;
-import com.monitoring.documents.model.UserEntity;
+import com.monitoring.documents.model.SubscriptionHelper;
+import com.monitoring.documents.model.DocumentModel;
 import com.monitoring.documents.repository.SubscriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
 
 @Component
@@ -22,81 +18,127 @@ public class SubscriptionService {
     @Autowired
     private SubscriptionRepository subscriptionRepository;
 
-    public List<Subscriptions> getAllSubscriptions() {
+    public List<DocumentModel> getAllSubscriptions() {
         return subscriptionRepository.findAll();
     }
 
 
-    public Optional<Subscriptions> getSubscriptionById(Long id) {
+    public Optional<DocumentModel> getSubscriptionById(Long id) {
         return subscriptionRepository.findById(id);
     }
 
-    public List<Subscriptions> getSubscriptionByIdAndDescription(Long id, String description) {
+    public List<DocumentModel> getSubscriptionByIdAndDescription(Long id, String description) {
         return subscriptionRepository.findAllByUserIdAndDescription(id, description);
     }
 
-    public List<Subscriptions> getAllSubscriptionsByUserId(Long id) {
+    public List<DocumentModel> getAllSubscriptionsByUserId(Long id) {
         return subscriptionRepository.findAllByUserId(id);
     }
 
-    public List<Subscriptions> getAllByEmail(String email) {
+    public List<DocumentModel> getAllByEmail(String email) {
         return subscriptionRepository.findAllByEmail(email);
     }
 
-    public Subscriptions save(@RequestBody Subscriptions subscription) {
+    public DocumentModel save(@RequestBody DocumentModel subscription) {
 
-       if(subscription.getExpireDate().compareTo(new Date()) < 0)
-           throw new IllegalStateException("Data expirării este mai mică decât data de astăzi.");
 
-       return subscriptionRepository.save(subscription);
+
+        if(subscriptionRepository.existsEmailByPlateNumber(subscription.getPlateNumber())) {
+            List<DocumentModel> tempDocument = subscriptionRepository.findByPlateNumber(subscription.getPlateNumber());
+
+            if(!subscription.getEmail().equals(tempDocument.get(0).getEmail()))
+                throw new IllegalStateException("Acest număr de mașină este deja luat!");
+        }
+
+        if(subscription.getExpireDate().compareTo(LocalDate.now()) <= 0)
+            throw new IllegalStateException("Data expirării este mai mică decât data de astăzi. ");
+
+
+        return subscriptionRepository.save(subscription);
+
     }
 
-    public void update(Long id, Subscriptions subscriptions) {
-        Subscriptions subscriptionTemp = subscriptionRepository.findById(id).orElseThrow(() -> new IllegalStateException(
+    public void update(Long id, DocumentModel documentModel) {
+        DocumentModel subscriptionTemp = subscriptionRepository.findById(id).orElseThrow(() -> new IllegalStateException(
                 "Id-ul nu exista: " + id
         ));
 
-        subscriptionTemp.setEmail(subscriptions.getEmail());
-        subscriptionTemp.setFirstName(subscriptions.getFirstName());
-        subscriptionTemp.setLastName(subscriptions.getLastName());
-        subscriptionTemp.setExpireDate(subscriptions.getExpireDate());
-        subscriptionTemp.setPlateNumber(subscriptions.getPlateNumber());
-        subscriptionTemp.setMade(subscriptions.getMade());
-        subscriptionTemp.setModel(subscriptions.getModel());
-        subscriptionTemp.setDescription(subscriptions.getDescription());
+
+        if(subscriptionRepository.existsEmailByPlateNumber(documentModel.getPlateNumber())) {
+            if(subscriptionRepository.existsEmailByPlateNumber(documentModel.getPlateNumber()))
+                throw new IllegalStateException("Acest număr de mașină este deja luat!");
+        }
+
+
+        subscriptionTemp.setEmail(documentModel.getEmail());
+        subscriptionTemp.setFirstName(documentModel.getFirstName());
+        subscriptionTemp.setLastName(documentModel.getLastName());
+        subscriptionTemp.setExpireDate(documentModel.getExpireDate());
+        subscriptionTemp.setPlateNumber(documentModel.getPlateNumber());
+        subscriptionTemp.setMade(documentModel.getMade());
+        subscriptionTemp.setModel(documentModel.getModel());
+        subscriptionTemp.setDescription(documentModel.getDescription());
 
         subscriptionRepository.save(subscriptionTemp);
 
     }
 
-    public List<Subscriptions> findAllByExpireDate() throws ParseException {
-        SimpleDateFormat myDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.set(Calendar.HOUR, 3);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.add(Calendar.DATE, 5);
-        String output = myDate.format(calendar.getTime());
+    public List<DocumentModel> findAllByExpireDate() throws ParseException {
+        LocalDate date = LocalDate.now();
 
-        Date outputer = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(output);
+        LocalDate myTempDate = date.plusDays(5);
 
-        return subscriptionRepository.findAllByExpireDate(outputer);
+
+        return subscriptionRepository.findAllByExpireDate(myTempDate);
     }
 
 
 
-    public void personalizedUpdate(Long id, Subscriptions subscriptions/*String firstName, String lastName, Date expireDate, String plateNumber, String made, String model, String description*/) {
+    public void personalizedUpdate(Long id, DocumentModel documentModel/*String firstName, String lastName, Date expireDate, String plateNumber, String made, String model, String description*/) {
 
-        Subscriptions subscriptionsTemp = subscriptionRepository.findById(id).orElseThrow(() -> new IllegalStateException("Nu gasesc un user asociat cu acest id: " + id));
+        DocumentModel documentModelTemp = subscriptionRepository.findById(id).orElseThrow(() -> new IllegalStateException("Nu gasesc un user asociat cu acest id: " + id));
 
-        subscriptionsTemp.setFirstName(subscriptions.getFirstName());
-        subscriptionsTemp.setLastName(subscriptions.getLastName());
-        subscriptionsTemp.setExpireDate(subscriptions.getExpireDate());
-        subscriptionsTemp.setPlateNumber(subscriptions.getPlateNumber());
-        subscriptionsTemp.setMade(subscriptions.getMade());
-        subscriptionsTemp.setModel(subscriptions.getModel());
-        subscriptionsTemp.setDescription(subscriptions.getDescription());
+        if(subscriptionRepository.existsEmailByPlateNumber(documentModel.getPlateNumber())) {
+            if(!documentModel.getEmail().equals(documentModelTemp.getEmail()))
+                throw new IllegalStateException("Acest număr de mașină este deja luat!");
+        }
+
+        documentModelTemp.setFirstName(documentModel.getFirstName());
+        documentModelTemp.setLastName(documentModel.getLastName());
+        documentModelTemp.setExpireDate(documentModel.getExpireDate());
+        documentModelTemp.setPlateNumber(documentModel.getPlateNumber());
+        documentModelTemp.setMade(documentModel.getMade());
+        documentModelTemp.setModel(documentModel.getModel());
+        documentModelTemp.setDescription(documentModel.getDescription());
+
+
+
+
+//        subscriptionsTemp.setFirstName(firstName);
+//        subscriptionsTemp.setLastName(lastName);
+//        subscriptionsTemp.setExpireDate(expireDate);
+//        subscriptionsTemp.setPlateNumber(plateNumber);
+//        subscriptionsTemp.setMade(made);
+//        subscriptionsTemp.setModel(model);
+//        subscriptionsTemp.setDescription(description);
+
+    }
+
+    public void personalizedUpdateGeneral(Long id, DocumentModel documentModel/*String firstName, String lastName, Date expireDate, String plateNumber, String made, String model, String description*/) {
+
+        DocumentModel documentModelTemp = subscriptionRepository.findById(id).orElseThrow(() -> new IllegalStateException("Nu gasesc un user asociat cu acest id: " + id));
+
+        if(subscriptionRepository.existsEmailByPlateNumber(documentModel.getPlateNumber())) {
+            if(!documentModel.getEmail().equals(documentModelTemp.getEmail()))
+                throw new IllegalStateException("Acest număr de mașină este deja luat!");
+        }
+        documentModelTemp.setExpireDate(documentModel.getExpireDate());
+        documentModelTemp.setPlateNumber(documentModel.getPlateNumber());
+        documentModelTemp.setMade(documentModel.getMade());
+        documentModelTemp.setModel(documentModel.getModel());
+        documentModelTemp.setDescription(documentModel.getDescription());
+
+
 
 
 //        subscriptionsTemp.setFirstName(firstName);
@@ -122,4 +164,18 @@ public class SubscriptionService {
 
     }
 
+    public List<Integer> countByType() {
+        Integer itp = subscriptionRepository.countByType("itp") != null ? subscriptionRepository.countByType("itp") : 0;
+        Integer rca = subscriptionRepository.countByType("rca")!= null  ? subscriptionRepository.countByType("rca"): 0;
+        Integer ci = subscriptionRepository.countByType("ci") != null ? subscriptionRepository.countByType("ci"): 0;
+        Integer rov = subscriptionRepository.countByType("rov") != null ? subscriptionRepository.countByType("rov"): 0;
+//        Integer itp = subscriptionRepository.countByType("itp").orElseThrow(() -> new IllegalStateException("A apărut o eroarea la preluarea tipului de document: itp."));
+
+        return Arrays.asList(new Integer[] {itp,rca,ci,rov});
+    }
+
+
+    public List<SubscriptionHelper> countAllMades() {
+        return subscriptionRepository.countAllMades();
+    }
 }

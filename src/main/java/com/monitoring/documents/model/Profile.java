@@ -30,7 +30,7 @@ public class Profile {
 
     @NotNull
     @NotBlank
-    private String phoneNumber;
+    private String phoneNumber; // ""
 
     @OneToOne(targetEntity = Address.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "profiles_address", referencedColumnName = "id")

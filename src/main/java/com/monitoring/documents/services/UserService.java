@@ -1,7 +1,6 @@
 package com.monitoring.documents.services;
 
 import com.monitoring.documents.model.ERole;
-import com.monitoring.documents.model.Subscriptions;
 import com.monitoring.documents.model.UserEntity;
 import com.monitoring.documents.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +12,7 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @Transactional
@@ -40,6 +37,9 @@ public class UserService implements UserDetailsService {
         return userRepository.findUsersByEmail(email);
     }
 
+    public Optional<UserEntity> getByEmail(String email) {
+        return userRepository.findUserByEmail(email);
+    }
     public List<String> getAllUsersByEmail() {
         return userRepository.getAllEmails();
     }
@@ -71,6 +71,7 @@ public class UserService implements UserDetailsService {
                 "N-a fost gasit niciun user cu id-ul " + userId
         ));
 
+
         updateInput(userFind, user.getEmail(), user.getProfile().getFirstName(), user.getProfile().getLastName(),
                 user.getProfile().getPhoneNumber(), user.getProfile().getDateOfBirth(),
                 user.getProfile().getAge(), user.getProfile().getPersonalIdentificationNumber(),
@@ -98,19 +99,24 @@ public class UserService implements UserDetailsService {
         userFind.getProfile().getAddress().setGateNumber(gateNumber);
     }
 
-    public ERole  getRole(String email) {
+    public ERole getRole(String email) {
         UserEntity userTemp = userRepository.findUserByEmail(email).orElseThrow(() -> new IllegalStateException("Utilizatorul " + email + " nu există în baza de date!"));
 
         return userTemp.getRole();
     }
 
-    public Integer countByMaleGender() {
-        return userRepository.countByMaleGender();
+    public List<Integer> countGenders() {
+        Integer male = userRepository.countGenders("masculin").orElseThrow(() -> new IllegalStateException("Eroare la preluarea numarului de persoane cu genul masculin."));
+        Integer female = userRepository.countGenders("feminin").orElseThrow(() -> new IllegalStateException("Eroare la preluarea numarului de persoane cu genul feminin."));
+
+
+        return Arrays.asList(new Integer[]{male, female});
     }
 
-    public Integer countAllUsers() {
+    public Optional<Integer> countAllUsers() {
         return userRepository.countById();
     }
+
     public void updateRole(String email, String role, String asker) {
         UserEntity userTemp = userRepository.findUserByEmail(email).orElseThrow(() -> new IllegalStateException("Utilizatorul " + email + " nu există în baza de date!"));
 
@@ -129,19 +135,19 @@ public class UserService implements UserDetailsService {
 
             switch (role) {
                 case "ROLE_MEMBER":
-                    if(userTemp.getRole().toString().equals("ROLE_ADMIN") || userTemp.getRole().toString().equals("ROLE_SUPERVISOR") )
+                    if((userTemp.getRole().toString().equals("ROLE_ADMIN") || userTemp.getRole().toString().equals("ROLE_SUPERVISOR")) && !(adminAccount.equals(authorityAsker.getUsername())))
                         throw new IllegalStateException("Doar administratorul poate modifica intr-un rol mai mic.");
                     userTemp.setRole(ERole.ROLE_MEMBER);
 
                     break;
                 case "ROLE_HELPER":
-                    if(userTemp.getRole().toString().equals("ROLE_ADMIN") || userTemp.getRole().toString().equals("ROLE_SUPERVISOR") )
+                    if((userTemp.getRole().toString().equals("ROLE_ADMIN") || userTemp.getRole().toString().equals("ROLE_SUPERVISOR")) && !adminAccount.equals(authorityAsker.getUsername()) )
                         throw new IllegalStateException("Doar administratorul poate modifica intr-un rol mai mic.");
 
                     userTemp.setRole(ERole.ROLE_HELPER);
                     break;
                 case "ROLE_MODERATOR":
-                    if(userTemp.getRole().toString().equals("ROLE_ADMIN") || userTemp.getRole().toString().equals("ROLE_SUPERVISOR") )
+                    if((userTemp.getRole().toString().equals("ROLE_ADMIN") || userTemp.getRole().toString().equals("ROLE_SUPERVISOR")) && !adminAccount.equals(authorityAsker.getUsername()) )
                         throw new IllegalStateException("Doar administratorul poate modifica intr-un rol mai mic.");
 
                     userTemp.setRole(ERole.ROLE_MODERATOR);
@@ -166,5 +172,16 @@ public class UserService implements UserDetailsService {
 
 
     }
+
+    public List<Integer> getCountRoles() {
+        Integer admins = userRepository.countRoles(ERole.ROLE_ADMIN) != null ? userRepository.countRoles(ERole.ROLE_ADMIN) : 0;
+        Integer supervisors = userRepository.countRoles(ERole.ROLE_SUPERVISOR) != null ? userRepository.countRoles(ERole.ROLE_SUPERVISOR) : 0;
+        Integer moderators = userRepository.countRoles(ERole.ROLE_MODERATOR) != null ? userRepository.countRoles(ERole.ROLE_MODERATOR) : 0;
+        Integer helpers = userRepository.countRoles(ERole.ROLE_HELPER) != null ? userRepository.countRoles(ERole.ROLE_HELPER) : 0;
+        Integer members = userRepository.countRoles(ERole.ROLE_MEMBER) != null ? userRepository.countRoles(ERole.ROLE_MEMBER) : 0;
+
+        return Arrays.asList(new Integer[] {admins, supervisors, moderators, helpers, members});
+    }
+
 
 }

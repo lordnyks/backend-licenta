@@ -5,11 +5,12 @@ import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
-@Table(name = "abonamente")
-public class Subscriptions {
+@Table(name = "documents")
+public class DocumentModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,8 +25,8 @@ public class Subscriptions {
 
     @NotNull
     @Column(name = "dateOfCreation")
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date dateOfCreation;
+    @JsonFormat(pattern = "dd.MM.yyyy")
+    private LocalDate dateOfCreation;
 
     @Column(name = "firstName")
     private String firstName;
@@ -33,9 +34,11 @@ public class Subscriptions {
     @Column(name = "lastName")
     private String lastName;
 
+    private String banca;
+
     @Column(name = "data_expirarii")
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date expireDate;
+    private LocalDate expireDate;
 
     @Column(name = "numar_national_masina")
     private String plateNumber;
@@ -46,24 +49,37 @@ public class Subscriptions {
     @Column(name = "model_masina")
     private String model;
 
+    private String personalIdentificationNumber;
+
+    private String mentions;
+
+
+    private String fullAddress;
+
     @Column(name = "descriere")
     private String description;
 
-    public Subscriptions() {
+
+
+    public DocumentModel() {
 
     }
 
-    public Subscriptions(Long id, @NotNull(message = "Introduceti un user_id") Long userId, @NotNull String email, @NotNull Date dateOfCreation, String firstName, String lastName, Date expireDate, String plateNumber, String made, String model, String description) {
+    public DocumentModel(Long id, @NotNull(message = "Introduceti un user_id") Long userId, @NotNull String email, @NotNull LocalDate dateOfCreation, String firstName, String lastName, String banca, LocalDate expireDate, String plateNumber, String made, String model, String personalIdentificationNumber, String mentions, String fullAddress, String description) {
         this.id = id;
         this.userId = userId;
         this.email = email;
         this.dateOfCreation = dateOfCreation;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.banca = banca;
         this.expireDate = expireDate;
         this.plateNumber = plateNumber;
         this.made = made;
         this.model = model;
+        this.personalIdentificationNumber = personalIdentificationNumber;
+        this.mentions = mentions;
+        this.fullAddress = fullAddress;
         this.description = description;
     }
 
@@ -91,12 +107,20 @@ public class Subscriptions {
         this.email = email;
     }
 
-    public Date getDateOfCreation() {
+    public LocalDate getDateOfCreation() {
         return dateOfCreation;
     }
 
-    public void setDateOfCreation(Date dateOfCreation) {
+    public void setDateOfCreation(LocalDate dateOfCreation) {
         this.dateOfCreation = dateOfCreation;
+    }
+
+    public String getBanca() {
+        return banca;
+    }
+
+    public void setBanca(String banca) {
+        this.banca = banca;
     }
 
     public String getFirstName() {
@@ -115,11 +139,35 @@ public class Subscriptions {
         this.lastName = lastName;
     }
 
-    public Date getExpireDate() {
+    public String getPersonalIdentificationNumber() {
+        return personalIdentificationNumber;
+    }
+
+    public void setPersonalIdentificationNumber(String personalIdentificationNumber) {
+        this.personalIdentificationNumber = personalIdentificationNumber;
+    }
+
+    public String getFullAddress() {
+        return fullAddress;
+    }
+
+    public void setFullAddress(String fullAddress) {
+        this.fullAddress = fullAddress;
+    }
+
+    public String getMentions() {
+        return mentions;
+    }
+
+    public void setMentions(String mentions) {
+        this.mentions = mentions;
+    }
+
+    public LocalDate getExpireDate() {
         return expireDate;
     }
 
-    public void setExpireDate(Date expireDate) {
+    public void setExpireDate(LocalDate expireDate) {
         this.expireDate = expireDate;
     }
 
