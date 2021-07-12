@@ -71,6 +71,11 @@ public class AuthController {
             return ResponseEntity.badRequest().body(new MessageResponse("Email-ul este deja existent!"));
         }
 
+        if(userRepository.existsPhoneNumber(request.getPhoneNumber()) > 0) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Acest număr de telefon este deja luat de către alt utilizator!"));
+
+        }
+
         UserEntity user = new UserEntity(request.getFirstName(),request.getLastName(), request.getDateOfBirth(), request.getEmail(), request.getUsername(),
                 passwordEncoder.encode(request.getPassword()), request.getGender(), request.getPhoneNumber());
 

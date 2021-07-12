@@ -78,6 +78,13 @@ public class UserController {
         return userService.getRole(email);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR', 'ROLE_HELPER', 'ROLE_MEMBER')")
+    @GetMapping(path = "roleUser")
+    public ERole getRoleUser(@RequestParam String email) {
+        return userService.getRoleUser(email);
+    }
+
+
     @GetMapping(path = "/countUsers")
     public Optional<Integer> getAllUsers() {
         return userService.countAllUsers();
@@ -120,6 +127,11 @@ public class UserController {
             throw new IllegalStateException("Parola pe care ai inserat-o este aceeași cu cea prezentă.");
         }
 
+    }
+
+    @GetMapping(path = "/getPhone/{email}")
+    public String getPhoneNumber(@PathVariable("email") String email) {
+        return userService.findPhoneNumber(email);
     }
 
 

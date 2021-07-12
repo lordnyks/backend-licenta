@@ -18,10 +18,20 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query("select user.email from UserEntity user")
     List<String> getAllEmails();
 
+    @Query("select user.profile.phoneNumber from UserEntity user where user.email = :email")
+    String findPhoneNumberByEmail(@Param("email") String email);
+
     UserEntity findUserByUsername(String username);
     Optional<UserEntity> findUserByEmail(String email);
     Boolean existsByUsername(String username);
     Boolean existsByEmail(String email);
+
+    @Query("select user.profile.phoneNumber from UserEntity user where user.email = :email")
+    String findPhoneNumber(@Param("email") String email);
+
+
+    @Query(value = "select count(phone_number) from user_profile inner join users on user_profile.id = users.id where phone_number = :phoneNumber", nativeQuery = true)
+    Integer existsPhoneNumber(@Param("phoneNumber")String phoneNumber);
 
     @Query("select count(user.id) from UserEntity user")
     Optional<Integer> countById();

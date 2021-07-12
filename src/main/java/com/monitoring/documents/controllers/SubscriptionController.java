@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.Document;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
@@ -57,7 +58,7 @@ public class SubscriptionController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR', 'ROLE_HELPER', 'ROLE_MEMBER')")
     @PutMapping(path = "{id}")
     public void update(@PathVariable("id") Long id, @RequestBody DocumentModel subscription) {
-        subscriptionService.update(id ,subscription);
+        subscriptionService.update(id, subscription);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPERVISOR', 'ROLE_MODERATOR', 'ROLE_HELPER', 'ROLE_MEMBER')")

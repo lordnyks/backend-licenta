@@ -30,6 +30,7 @@ public class Profile {
 
     @NotNull
     @NotBlank
+    @Column(unique = true)
     private String phoneNumber; // ""
 
     @OneToOne(targetEntity = Address.class, cascade = CascadeType.ALL)

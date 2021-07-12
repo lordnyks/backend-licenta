@@ -77,12 +77,12 @@ public class UserService implements UserDetailsService {
                 user.getProfile().getAge(), user.getProfile().getPersonalIdentificationNumber(),
                 user.getProfile().getAddress().getCounty(), user.getProfile().getAddress().getCity(),
                 user.getProfile().getAddress().getTownShip(),user.getProfile().getAddress().getVillage(),
-                user.getProfile().getAddress().getStreet(), user.getProfile().getAddress().getGateNumber());
+                user.getProfile().getAddress().getStreet(), user.getProfile().getAddress().getGateNumber(), user.getProfile().getGender());
     }
 
     public void updateInput(UserEntity userFind, String email, String firstName, String lastName,
                             String phoneNumber, LocalDate dateOfBirth, Integer age, String personalIdentificationNumber,
-                            String county, String city, String townShip, String village, String street, String gateNumber) {
+                            String county, String city, String townShip, String village, String street, String gateNumber, String gender) {
 
         userFind.setEmail(email);
         userFind.getProfile().setFirstName(firstName);
@@ -97,14 +97,25 @@ public class UserService implements UserDetailsService {
         userFind.getProfile().getAddress().setVillage(village);
         userFind.getProfile().getAddress().setStreet(street);
         userFind.getProfile().getAddress().setGateNumber(gateNumber);
+        userFind.getProfile().setGender(gender);
     }
 
     public ERole getRole(String email) {
         UserEntity userTemp = userRepository.findUserByEmail(email).orElseThrow(() -> new IllegalStateException("Utilizatorul " + email + " nu există în baza de date!"));
 
+
+
         return userTemp.getRole();
     }
 
+    public ERole getRoleUser(String email) {
+        if (userRepository.existsByEmail(email)) {
+            UserEntity userTemp = userRepository.findUserByUsername(email);
+            return userTemp.getRole();
+        }
+
+        return ERole.ROLE_MEMBER;
+    }
     public List<Integer> countGenders() {
         Integer male = userRepository.countGenders("masculin").orElseThrow(() -> new IllegalStateException("Eroare la preluarea numarului de persoane cu genul masculin."));
         Integer female = userRepository.countGenders("feminin").orElseThrow(() -> new IllegalStateException("Eroare la preluarea numarului de persoane cu genul feminin."));
@@ -171,6 +182,10 @@ public class UserService implements UserDetailsService {
         }
 
 
+    }
+
+    public String findPhoneNumber(String email) {
+        return userRepository.findPhoneNumberByEmail(email);
     }
 
     public List<Integer> getCountRoles() {

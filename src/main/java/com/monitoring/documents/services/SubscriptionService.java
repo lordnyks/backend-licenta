@@ -2,6 +2,7 @@ package com.monitoring.documents.services;
 
 import com.monitoring.documents.model.SubscriptionHelper;
 import com.monitoring.documents.model.DocumentModel;
+import com.monitoring.documents.model.SubscriptionSaverHelper;
 import com.monitoring.documents.repository.SubscriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -42,16 +43,20 @@ public class SubscriptionService {
     public DocumentModel save(@RequestBody DocumentModel subscription) {
 
 
+        if(subscription.getDescription().equals("itp") || subscription.getDescription().equals("rov") || subscription.getDescription().equals("rca")) {
 
-        if(subscriptionRepository.existsEmailByPlateNumber(subscription.getPlateNumber())) {
-            List<DocumentModel> tempDocument = subscriptionRepository.findByPlateNumber(subscription.getPlateNumber());
+            if(subscriptionRepository.existsEmailByPlateNumber(subscription.getPlateNumber())) {
+                List<DocumentModel> tempDocument = subscriptionRepository.findByPlateNumber(subscription.getPlateNumber());
 
-            if(!subscription.getEmail().equals(tempDocument.get(0).getEmail()))
-                throw new IllegalStateException("Acest număr de mașină este deja luat!");
+                if(!subscription.getEmail().equals(tempDocument.get(0).getEmail()))
+                    throw new IllegalStateException("Acest număr de mașină este deja luat!");
+            }
         }
+        if(subscription.getExpireDate().compareTo(LocalDate.now()) == 0)
+            throw new IllegalStateException("Ați setat data de astăzi!");
 
-        if(subscription.getExpireDate().compareTo(LocalDate.now()) <= 0)
-            throw new IllegalStateException("Data expirării este mai mică decât data de astăzi. ");
+        if(subscription.getExpireDate().compareTo(LocalDate.now()) < 0)
+            throw new IllegalStateException("Documentul poate fi deja expirat!");
 
 
         return subscriptionRepository.save(subscription);
@@ -62,22 +67,36 @@ public class SubscriptionService {
         DocumentModel subscriptionTemp = subscriptionRepository.findById(id).orElseThrow(() -> new IllegalStateException(
                 "Id-ul nu exista: " + id
         ));
+        List<DocumentModel> tempDocument = subscriptionRepository.findByPlateNumber(documentModel.getPlateNumber());
 
 
-        if(subscriptionRepository.existsEmailByPlateNumber(documentModel.getPlateNumber())) {
-            if(subscriptionRepository.existsEmailByPlateNumber(documentModel.getPlateNumber()))
-                throw new IllegalStateException("Acest număr de mașină este deja luat!");
-        }
+
+            if(subscriptionTemp.getDescription().equals("itp") || subscriptionTemp.getDescription().equals("rov") || subscriptionTemp.getDescription().equals("rca")) {
+
+                if(subscriptionRepository.existsEmailByPlateNumber(documentModel.getPlateNumber())) {
+
+                    if(!documentModel.getEmail().equals(tempDocument.get(0).getEmail()))
+                        throw new IllegalStateException("Acest număr de mașină este deja luat!");
+                }
+            }
 
 
-        subscriptionTemp.setEmail(documentModel.getEmail());
-        subscriptionTemp.setFirstName(documentModel.getFirstName());
-        subscriptionTemp.setLastName(documentModel.getLastName());
+        if(documentModel.getExpireDate().compareTo(LocalDate.now()) == 0)
+            throw new IllegalStateException("Ați setat data de astăzi!");
+        if(documentModel.getExpireDate().compareTo(LocalDate.now()) <= 0)
+            throw new IllegalStateException("Documentul poate fi deja expirat!");
+        
         subscriptionTemp.setExpireDate(documentModel.getExpireDate());
         subscriptionTemp.setPlateNumber(documentModel.getPlateNumber());
         subscriptionTemp.setMade(documentModel.getMade());
         subscriptionTemp.setModel(documentModel.getModel());
-        subscriptionTemp.setDescription(documentModel.getDescription());
+        subscriptionTemp.setFirstName(documentModel.getFirstName());
+        subscriptionTemp.setLastName(documentModel.getLastName());
+        subscriptionTemp.setPersonalIdentificationNumber(documentModel.getPersonalIdentificationNumber());
+        subscriptionTemp.setBanca(documentModel.getBanca());
+        subscriptionTemp.setMentions(documentModel.getMentions());
+        subscriptionTemp.setFullAddress(documentModel.getFullAddress());
+
 
         subscriptionRepository.save(subscriptionTemp);
 
@@ -169,9 +188,11 @@ public class SubscriptionService {
         Integer rca = subscriptionRepository.countByType("rca")!= null  ? subscriptionRepository.countByType("rca"): 0;
         Integer ci = subscriptionRepository.countByType("ci") != null ? subscriptionRepository.countByType("ci"): 0;
         Integer rov = subscriptionRepository.countByType("rov") != null ? subscriptionRepository.countByType("rov"): 0;
+        Integer rlb = subscriptionRepository.countByType("rlb") != null ? subscriptionRepository.countByType("rlb"): 0;
+        Integer impozit = subscriptionRepository.countByType("impozit") != null ? subscriptionRepository.countByType("impozit"): 0;
 //        Integer itp = subscriptionRepository.countByType("itp").orElseThrow(() -> new IllegalStateException("A apărut o eroarea la preluarea tipului de document: itp."));
 
-        return Arrays.asList(new Integer[] {itp,rca,ci,rov});
+        return Arrays.asList(new Integer[] {itp,rca,ci,rov,rlb,impozit});
     }
 
 
